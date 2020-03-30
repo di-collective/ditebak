@@ -5,7 +5,7 @@
 
   import { createEventDispatcher, onMount } from 'svelte';
 
-  export let topic, banner, question, answer, context, state, closing
+  export let topic = '', banner = '', question = '', prediction = '', answer = '', context = '', state = 'published', closing
 
   const dispatch = createEventDispatcher();
   const localTimeFormat = { 
@@ -16,6 +16,8 @@
     hour: 'numeric',
     minute: 'numeric'
   }
+
+  let info = ''
   let action = 'Tebak!'
   let disabled = false
 
@@ -28,19 +30,25 @@
       state = "closed"
     }
 
+
+    if (prediction) {
+      action = "Subah ditebak"
+      disabled = true
+    }
+
     switch(state) {
       case "closed":
-        closing = "Tebak-tebakan ditutup"
+        info = "Tebak-tebakan ditutup"
         action = "Sudah Tutup"
         disabled = true
         break
       case "answered":
-        closing = "Tebakan sudah terjawab"
+        info = "Tebakan sudah terjawab"
         action = "Terjawab"
         disabled = true
         break
       default:
-        closing = "Tutup hari " + close.toLocaleDateString("id-ID", localTimeFormat)
+        info = "Tutup hari " + close.toLocaleDateString("id-ID", localTimeFormat)
         break
     }
   })
@@ -68,8 +76,17 @@
     color: dimgrey;
   }
 
-  .ans {
+  .col {
     text-align: right;
+  }
+
+  h2.ans:empty::before {
+    content: '-';
+  }
+
+  .gr-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 </style>
 
@@ -77,8 +94,18 @@
   <Content>
     <h3 class="title">{question}</h3>
     <h5 class="subtitle">{context}</h5>
-    <h5 class="subtitle">{closing}</h5>
-    <h2 class="ans">{answer}</h2>
+    <h5 class="subtitle">{info}</h5>
+    <div class="gr-2">
+    
+      <span class="col">
+        <h5 class="subtitle">Tebakan</h5>
+        <h2 class="ans">{prediction}</h2>
+      </span>
+      <span class="col">
+        <h5 class="subtitle">Jawaban</h5>
+        <h2 class="ans">{answer}</h2>
+      </span>
+    </div>
   </Content>
   <Actions>
     <!-- TODO: Pending implementation

@@ -115,13 +115,29 @@ func (api *restapi) MyProfile(w http.ResponseWriter, r *http.Request, p httprout
 // TopicList find all topic where
 // @state != draft
 func (api *restapi) TopicList(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	res := rest.NewAPIResponse(w, r)
+	ctx := r.Context()
+
 	topicURL, _ := url.Parse(api.conf.URL.Topic)
-	rq := r.URL.Query()
+	rq := topicURL.Query()
 	rq.Set("state", "published,closed,answered")
-	topicURL.RawQuery = rq.Encode()
 
 	//TODO: Don't use redirect!
-	http.Redirect(w, r, topicURL.String(), http.StatusMovedPermanently)
+	// http.Redirect(w, r, topicURL.String(), http.StatusMovedPermanently)
+	topicURL.RawQuery = rq.Encode()
+	result, err := api.ggw.Forward(ctx, topicURL.String())
+	exc, throw := exception.IsException(err)
+	if throw {
+		res.Error(exc.Message(), err).Respond(exc.Code())
+		return
+	} else if err != nil {
+		res.Error(fmt.Sprintf("Failed get topics"), err).
+			Respond(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(result)
 }
 
 // Topics one
@@ -154,15 +170,25 @@ func (api *restapi) TopicBet(w http.ResponseWriter, r *http.Request, p httproute
 
 // MyBets list
 func (api *restapi) MyBets(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	owner := p.ByName("owner")
-	rq := r.URL.Query()
-	rq.Set("owner", owner)
+	res := rest.NewAPIResponse(w, r)
+	ctx := r.Context()
 
-	betURL, _ := url.Parse(api.conf.URL.Bet)
-	betURL.RawQuery = rq.Encode()
+	// optimistic coding ...
+	// .MyBets is guarded endpoint so email should already put by middleware
+	email := ctx.Value(global.Context.Email()).(string)
+	result, err := api.ggw.MyBets(ctx, email)
+	exc, throw := exception.IsException(err)
+	if throw {
+		res.Error(exc.Message(), err).Respond(exc.Code())
+		return
+	} else if err != nil {
+		res.Error(fmt.Sprintf("Failed get topics"), err).
+			Respond(http.StatusInternalServerError)
+		return
+	}
 
-	//TODO: Don't use redirect!
-	http.Redirect(w, r, betURL.String(), http.StatusPermanentRedirect)
+	w.WriteHeader(http.StatusOK)
+	w.Write(result)
 }
 
 // PlaceBet ...

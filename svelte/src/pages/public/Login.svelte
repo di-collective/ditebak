@@ -8,7 +8,6 @@
   const conf = {
     callbacks: {
       signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-        console.log("WE'RE THERE")
         const fa = JSON.parse(JSON.stringify(authResult))
         gateway.login(fa).then(() => {
           navigateTo('/')

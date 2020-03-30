@@ -137,4 +137,4 @@ temp/
 *.env
 backend/cmd/monolith
 
-# /public/build/
+svelte/public/build

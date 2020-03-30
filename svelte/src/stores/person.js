@@ -7,26 +7,25 @@ const state = {
   email: '',
   photo: '',
   reputation: 0,
+  bets: []
 }
 
 const { subscribe, update } = writable(state)
 
 const person = {
   subscribe,
-  displayName: (dp) => update(o => {
-    o.displayName = dp
-    return o
-  }),
-  email: (e) => update(o => {
-    o.email = e
-    return o
-  }),
-  photo: (p) => update(o => {
-    o.photo = p
-    return o
-  }),
-  reputation: (r) => update(o => {
-    o.reputation = r
+  myBet: (topic) => {
+    const bet = state.bets.find((b) => {
+      return b.topic_id === topic
+    })
+    if (!bet) return '';
+
+    return bet.prediction
+  },
+  addBets: (...b) => update(o => {
+    o.bets.push(...b)
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(o))
     return o
   }),
   toStorage: (info) => update(o => {
@@ -34,6 +33,7 @@ const person = {
     o.email = info.email
     o.photo = info.photo
     o.reputation = info.reputation
+    o.bets = info.bets
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(o))
     return o
@@ -47,6 +47,7 @@ const person = {
     o.email = info.email
     o.photo = info.photo
     o.reputation = info.reputation
+    o.bets = info.bets
     return o
   })
 }

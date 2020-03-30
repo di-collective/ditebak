@@ -43,6 +43,55 @@ func New(conf *Config) *Gateway {
 	return gw
 }
 
+// Forward request to API
+func (gw *Gateway) Forward(ctx context.Context, uri string) ([]byte, error) {
+	var result []byte
+	err := gw.doReq(ctx, &req{
+		mtd: "GET",
+		url: uri,
+		err: defaultResponseHandler,
+		parse: func(b []byte) error {
+			result = b
+			return nil
+		},
+	})
+	return result, err
+}
+
+// MyBets forwarded from API
+func (gw *Gateway) MyBets(ctx context.Context, email string) ([]byte, error) {
+	users := []*dto.User{}
+	gw.doReq(ctx, &req{
+		res: "users",
+		mtd: "GET",
+		url: gw.conf.FindUserURL(url.Values{
+			"email": []string{email},
+			"page":  []string{"1"},
+			"size":  []string{"1"},
+		}),
+		err:   defaultResponseHandler,
+		parse: defaultResponseUnwrapper(&users),
+	})
+
+	// if user is not found
+	if len(users) <= 0 {
+		return nil, exception.New(http.StatusUnauthorized, "You are not authenticated. Please login before placing bet")
+	}
+
+	var result []byte
+	user := users[0]
+	return result, gw.doReq(ctx, &req{
+		mtd: "GET",
+		res: "bets",
+		url: gw.conf.GetBetURL("", user.ID),
+		err: defaultResponseHandler,
+		parse: func(b []byte) error {
+			result = b
+			return nil
+		},
+	})
+}
+
 // PlaceBet ...
 // Verification:
 // 1. Reputation at stake must be more than 0 and can't be more than configured maximum

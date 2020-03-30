@@ -33,7 +33,7 @@
 </style>
 
 <TopAppBar dense>
-  <Row>
+  <Row class="mobile-wd">
     <Section>
       <!-- <IconButton class='material-icons'>menu</IconButton> -->
       <Navigate to='/'><Title>Ditebak.com</Title></Navigate>

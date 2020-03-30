@@ -22,7 +22,7 @@
 <main>
   <TopBar></TopBar>
 
-  <div use:Adjust class="grid-container">
+  <div use:Adjust class="grid-container mobile-wd">
     <div class="grid-item">
     </div>
 

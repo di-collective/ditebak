@@ -47,7 +47,6 @@
     page: 1, total: 0,
     text: '',
     paging: (page, {total_data, total_page}) => {
-      console.log("PAGING", page, total_page)
       pagination.page = page
       pagination.total = total_page
       pagination.enabled = page < total_page
@@ -73,14 +72,6 @@
   }
   let topics = []
 
-  // variables declaration
-  let status = writable(['published', 'closed', 'answered'])
-  let statusID = {
-    'published': 'Masih Buka',
-    'closed': 'Udah Tutup',
-    'answered': 'Terjawab'
-  }
-
   function tebak(event) {
     dialog.topic = event.detail.topic
     dialog.question = event.detail.topic.question
@@ -89,9 +80,9 @@
 
   async function submit() {
     try {
-      const response = await gateway.bet({
+      await gateway.bet({
         topic: dialog.topic.id,
-        prediction: dialog.bet.prediction,
+        prediction: dialog.bet.prediction.toString(),
         stake: dialog.bet.stake
       })
       popup.show("Sukses nebak!", "Tebakanmu sukses tercatat")
@@ -119,19 +110,12 @@
 </style>
 
 <div>
-
-<!-- <div class="chip-right">
-  <Set chips={['published', 'closed', 'answered']} let:chip filter bind:selected={$status} >
-      <Chip tabindex='0'><Checkmark /><Text>{statusID[chip]}</Text></Chip>
-  </Set>
-</div> -->
-<!-- <hr style="margin: 1rem 0;"> -->
-
   {#each topics as topic, idx}
   <Topic 
     topic={topic}
     banner={topic.banner}
     question={topic.question}
+    prediction={gateway.myBet(topic.id)}
     answer={topic.answer}
     context={topic.context}
     state={topic.state}
@@ -162,7 +146,7 @@
     <Content id="simple-content">
       <Text>{dialog.topic.question}</Text>
 
-      <Textfield use={[InitialFocus]} style="width: 100%" dense bind:value={dialog.bet.prediction} label="Tebakanmu" input$aria-controls="helper-text" input$aria-describedby="helper-text-dense" />
+      <Textfield type="number" use={[InitialFocus]} style="width: 100%" dense bind:value={dialog.bet.prediction} label="Tebakanmu" input$aria-controls="helper-text" input$aria-describedby="helper-text-dense" />
       <HelperText id="helper-text">Tulis tebakanmu dan 'Yok Lah!'</HelperText>
     </Content>
     <Actions>

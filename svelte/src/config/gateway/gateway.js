@@ -25,7 +25,6 @@ rest.interceptors.response.use(response => {
 })
 
 async function findAllTopics(page = 1) {
-  console.log("PAGE=",page)
   return rest.get(config.topics, {
     params: {
       page: page
@@ -44,8 +43,10 @@ async function doLogin(fa) {
     displayName: profile.display_name,
     email: profile.email,
     photo: profile.photo,
-    reputation: profile.reputation
+    reputation: profile.reputation,
+    bets: []
   })
+  await syncMyBets()
 }
 
 async function doLogout() {
@@ -53,20 +54,25 @@ async function doLogout() {
   person.toStorage({
     displayName: '',
     email: '',
-    photo: ''
+    photo: '',
+    bets: []
   })
 }
 
-async function placeBet(bet) {
-  return await rest.post(config.bets, {
-    data: bet
+async function placeBet(command) {
+  const response = await rest.post(config.bets, {
+    data: command
   })
+  const body = response.data
+  const bet = body.data
+  person.addBets(bet)
 }
 
-async function myBets() {
+async function syncMyBets() {
   const response = await rest.get(config.bets)
   const body = response.data
-  return body
+  const bets = body.data
+  person.addBets(...bets)
 }
 
 async function syncProfile() {
@@ -78,8 +84,10 @@ async function syncProfile() {
     displayName: profile.display_name,
     email: profile.email,
     photo: profile.photo,
-    reputation: profile.reputation
+    reputation: profile.reputation,
+    bets: []
   })
+  await syncMyBets()
 }
 
 const gateway = {
@@ -88,6 +96,7 @@ const gateway = {
   topics: findAllTopics,
   bet: placeBet,
 
+  myBet: person.myBet,
   sync: syncProfile
 }
 
