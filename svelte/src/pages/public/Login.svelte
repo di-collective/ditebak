@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   import { navigateTo } from 'svelte-router-spa'
 
-  import { AuthUI, Providers } from 'firebase-conf/firebase.js'
+  import { init } from 'firebase-conf/firebase.js'
   import { gateway } from 'gateway-conf/gateway.js'
 
   const conf = {
@@ -27,16 +27,26 @@
     },
     // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
     signInFlow: 'popup',
-    signInOptions: Providers,
+    signInOptions: [],
     signInSuccessUrl: '<my-redirect-asshole!>',
     // Terms of service url.
     tosUrl: '<your-tos-url>',
     privacyPolicyUrl: '<your-privacy-policy-url>'
   }
 
-  onMount(() => {
-    AuthUI.start('#firebaseui-auth-container', conf)
-  })
+  function bind() {
+    if (document.readyState === "complete") {
+      let fba = init()
+      conf.signInOptions = fba.Providers
+      fba.AuthUI.start('#firebaseui-auth-container', conf)
+    } else {
+      document.addEventListener('readystatechange', () => {
+        bind()
+      })
+    }
+  }
+
+  onMount(bind)
 </script>
 
 <div id='firebaseui-auth-container' />

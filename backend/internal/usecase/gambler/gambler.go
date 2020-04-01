@@ -7,13 +7,12 @@ import (
 	"net/url"
 	"time"
 
+	resty "github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/di-collective/ditebak/backend/internal/usecase/gambler/command"
 	"github.com/di-collective/ditebak/backend/internal/usecase/gambler/dto"
 	"github.com/di-collective/ditebak/backend/pkg/exception"
-
-	"github.com/go-resty/resty"
 )
 
 type req struct {
@@ -134,7 +133,7 @@ func (gw *Gateway) PlaceBet(ctx context.Context, email string, pb *command.Place
 	}, {
 		res:   "bets",
 		mtd:   "GET",
-		url:   gw.conf.GetBetURL(pb.Topic, pb.User),
+		url:   gw.conf.GetBetURL(pb.Topic, email),
 		err:   defaultResponseHandler,
 		parse: defaultResponseUnwrapper(&bets),
 	}}

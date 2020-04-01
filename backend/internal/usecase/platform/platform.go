@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"path"
 
+	resty "github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/di-collective/ditebak/backend/internal/domain/bet/dao"
@@ -16,7 +17,6 @@ import (
 	"github.com/di-collective/ditebak/backend/internal/usecase/platform/command"
 	"github.com/di-collective/ditebak/backend/internal/usecase/platform/dto"
 	"github.com/di-collective/ditebak/backend/pkg/exception"
-	"github.com/go-resty/resty"
 )
 
 type req struct {

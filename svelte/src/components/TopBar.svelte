@@ -48,40 +48,41 @@
         <IconButton aria-label='Account' on:click={onAccountClicked}>
           <img class='pp-img' src='{$person.photo}' alt='profile'>
         </IconButton>
+
+        <Menu bind:this={menu.profile} anchor={false} bind:anchorElement={menu.anchor} anchorCorner='BOTTOM_LEFT'>
+          <List twoLine>
+            <Item>
+              <Text>
+                <PrimaryText>{$person.displayName}</PrimaryText>
+                <SecondaryText>{$person.email}</SecondaryText>
+              </Text>
+            </Item>
+            <Item>
+              <Text>
+                <PrimaryText>{$person.reputation}</PrimaryText>
+                <SecondaryText>Reputasi anda saat ini</SecondaryText>
+              </Text>
+            </Item>
+            <Item>
+              <Text>
+                <PrimaryText>Tebak-tebakan</PrimaryText>
+                <SecondaryText>Lihat koleksi tebak-tebakan anda</SecondaryText>
+              </Text>
+            </Item>
+            <Separator />
+            <Item on:SMUI:action={() => {
+              gateway.logout()
+              navigateTo('/')
+            }}>
+              <Text>
+                <PrimaryText>Cabuts Guys...</PrimaryText>
+                <SecondaryText>Logout? Salah mulu ya?</SecondaryText>
+              </Text>
+            </Item>
+          </List>
+        </Menu>
       </div>
 
-      <Menu bind:this={menu.profile} anchor={false} bind:anchorElement={menu.anchor} anchorCorner='BOTTOM_LEFT'>
-        <List twoLine>
-          <Item>
-            <Text>
-              <PrimaryText>{$person.displayName}</PrimaryText>
-              <SecondaryText>{$person.email}</SecondaryText>
-            </Text>
-          </Item>
-          <Item>
-            <Text>
-              <PrimaryText>{$person.reputation}</PrimaryText>
-              <SecondaryText>Reputasi anda saat ini</SecondaryText>
-            </Text>
-          </Item>
-          <Item>
-            <Text>
-              <PrimaryText>Tebak-tebakan</PrimaryText>
-              <SecondaryText>Lihat koleksi tebak-tebakan anda</SecondaryText>
-            </Text>
-          </Item>
-          <Separator />
-          <Item on:SMUI:action={() => {
-            gateway.logout()
-            navigateTo('/')
-          }}>
-            <Text>
-              <PrimaryText>Cabuts Guys...</PrimaryText>
-              <SecondaryText>Logout? Salah mulu ya?</SecondaryText>
-            </Text>
-          </Item>
-        </List>
-      </Menu>
       {/if}
     </Section>
   </Row>

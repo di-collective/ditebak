@@ -7,6 +7,7 @@ import { terser } from 'rollup-plugin-terser';
 import postcss from 'rollup-plugin-postcss';
 import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
+import strip from '@rollup/plugin-strip'
 
 // preload .env variables
 dotenv.config()
@@ -48,6 +49,7 @@ export default {
 		file: 'public/build/bundle.js'
 	},
 	plugins: [
+		strip(),
 		replace({
 			'exclude': 'node_modules/**',
 			'process.browser': true,

@@ -12,7 +12,6 @@ import (
 
 	firebase "firebase.google.com/go"
 
-	"github.com/SpaceStock/SpacestockCore/pkg/httputil"
 	"github.com/di-collective/ditebak/backend/internal/usecase/platform"
 	"github.com/di-collective/ditebak/backend/internal/usecase/platform/command"
 	"github.com/di-collective/ditebak/backend/internal/usecase/platform/dto"
@@ -38,6 +37,7 @@ func New() rest.REST {
 		Const: &platform.ConfigConst{
 			SessionDuration: 5 * 24 * time.Hour,
 			AuthClient:      fac,
+			Prod:            os.Getenv("PROD") == "true",
 		},
 		URL: &platform.ConfigURL{
 			Cred:  defaultOnEmptyEnv(os.Getenv("URL_CRED"), "http://localhost:8080/credentials"),
@@ -112,7 +112,7 @@ func (api *restapi) Logout(w http.ResponseWriter, r *http.Request, p httprouter.
 	}
 
 	w.Header().Set("Set-Cookie", cookie.String())
-	httputil.NewAPIResponse(r).Respond(http.StatusOK, w)
+	rest.NewAPIResponse(w, r).Respond(http.StatusOK)
 	return
 }
 

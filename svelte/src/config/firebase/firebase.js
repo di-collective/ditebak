@@ -1,13 +1,28 @@
 import { firebaseConfig } from './settings'
 
-firebase.initializeApp(firebaseConfig)
+let initialized = false
+let Auth, AuthUI, Providers
+function init() {
+  if (initialized) return {
+    AuthUI: AuthUI,
+    Providers: Providers
+  };
+  
+  firebase.initializeApp(firebaseConfig)
+  initialized = true
 
-const Auth = firebase.auth()
-const Providers = [
+  Auth = firebase.auth()
+  AuthUI = new firebaseui.auth.AuthUI(Auth),
+  Providers = [
     // firebase.auth.EmailAuthProvider.PROVIDER_ID,
     firebase.auth.GoogleAuthProvider.PROVIDER_ID
-]
+  ]
 
-const AuthUI = new firebaseui.auth.AuthUI(Auth)
+  return {
+    AuthUI: AuthUI,
+    Providers: Providers
+  }
+}
 
-export { Auth, AuthUI, Providers }
+
+export { init }

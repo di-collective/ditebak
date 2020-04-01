@@ -1,0 +1,1 @@
+docker build -t gcr.io/ditebak/backend-monolith:latest -f docker/monolith.dockerfile .
