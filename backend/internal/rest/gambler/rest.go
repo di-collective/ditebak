@@ -119,11 +119,9 @@ func (api *restapi) TopicList(w http.ResponseWriter, r *http.Request, p httprout
 	ctx := r.Context()
 
 	topicURL, _ := url.Parse(api.conf.URL.Topic)
-	rq := topicURL.Query()
+	rq := r.URL.Query()
 	rq.Set("state", "published,closed,answered")
 
-	//TODO: Don't use redirect!
-	// http.Redirect(w, r, topicURL.String(), http.StatusMovedPermanently)
 	topicURL.RawQuery = rq.Encode()
 	result, err := api.ggw.Forward(ctx, topicURL.String())
 	exc, throw := exception.IsException(err)

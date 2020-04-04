@@ -44,6 +44,8 @@ func New(conf *Config) *Gateway {
 
 // Forward request to API
 func (gw *Gateway) Forward(ctx context.Context, uri string) ([]byte, error) {
+	log.Traceln("Tunneling to:", uri)
+
 	var result []byte
 	err := gw.doReq(ctx, &req{
 		mtd: "GET",

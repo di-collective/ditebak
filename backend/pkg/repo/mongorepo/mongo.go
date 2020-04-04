@@ -79,7 +79,7 @@ func (r *Repo) Find(ctx context.Context, opt repo.FindOptions) (int64, []interfa
 		fi["_deleted"] = map[string]bool{"$exists": false}
 	}
 
-	log.Traceln(trace, fi)
+	log.Traceln(trace, "Filter:", fi, "Page:", opt.Page, "Skip:", opt.Skip(), "Limit:", opt.Size)
 	cur, err := r.collection.Find(ctx, opt.Params, fo)
 	if err != nil {
 		return 0, nil, err

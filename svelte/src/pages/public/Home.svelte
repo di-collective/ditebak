@@ -94,6 +94,10 @@
         return
       }
 
+      if (err.status === 400) {
+        popup.show("Duh, gagal nebak!", "Pastikan tebakan terisi, dan reputasi yang dipertaruhkan antara 1 sampai 10")
+      }
+
       console.error("Failed to place a bet: ", e)
     }
   }
@@ -148,6 +152,9 @@
 
       <Textfield type="number" use={[InitialFocus]} style="width: 100%" dense bind:value={dialog.bet.prediction} label="Tebakanmu" input$aria-controls="helper-text" input$aria-describedby="helper-text-dense" />
       <HelperText id="helper-text">Tulis tebakanmu dan 'Yok Lah!'</HelperText>
+
+      <Textfield type="number" input$min="1" input$max="10" style="width: 100%" dense bind:value={dialog.bet.stake} label="Reputasi" input$aria-controls="helper-text" input$aria-describedby="helper-text-dense" />
+      <HelperText id="helper-text">Berapa reputasi yang mau anda pertaruhkan (1 - 10)?</HelperText>
     </Content>
     <Actions>
       <Button color="secondary">
